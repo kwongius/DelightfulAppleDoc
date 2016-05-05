@@ -17,15 +17,15 @@
     // Get the current URL
     var current_location = window.location.href;
 
-    var prerelease = current_location.match(/^https?:\/\/developer\.apple\.com\/library\/prerelease/i) != null;
-    var documentation = current_location.match(/^https?:\/\/developer\.apple\.com\/library(\/prerelease)?\/[^\/]+\/documentation\//i) != null;
+    var prerelease = current_location.match(/^https?:\/\/developer\.apple\.com\/library\/prerelease/i) !== null;
+    var documentation = current_location.match(/^https?:\/\/developer\.apple\.com\/library(\/prerelease)?\/[^\/]+\/documentation\//i) !== null;
     var pageNotFound = document.body.className == "pnf";
 
     // If page isn't found, add a simple back button
     if (pageNotFound) {
         GM_addStyle(GM_getResourceText("pure-css"));
 
-        var backButton = document.createElement('button');
+        var backButton = document.createElement("button");
         backButton.id = "back_button";
         backButton.className = "pure-button";
         backButton.innerHTML = "Go Back";
@@ -66,7 +66,7 @@
         GM_addStyle(".github-fork-ribbon-wrapper { opacity: 0.5; } .github-fork-ribbon-wrapper:hover { opacity: 1.0; }");
     }
 
-    var ribbon = document.createElement('div');
+    var ribbon = document.createElement("div");
     ribbon.id = "ribbon";
     ribbon.className = "github-fork-ribbon-wrapper right";
     ribbon.style.position = "fixed";
@@ -84,35 +84,86 @@
         #os_buttons {
             z-index: 9999;
             position: fixed;
-            right: 12px;
-            top: 150px;
+            right: 15px;
+            bottom: 15px;
             text-align: right;
-            background-color: #ccc;
-            padding:4px;
+            padding: 4px;
+            opacity: 0.5;
+            background: #ccc;
         }
 
-        #os_buttons > div {
-            margin: 4px;
+        #os_buttons:hover {
+            opacity: 1.0;
+        }
+
+        #os_buttons > ul > li {
+           padding: 4px;
+        }
+
+        #os_buttons_list > li.other {
+            display: none;
+        }
+        #os_buttons_list > li.current {
+            display: inline-block;
+        }
+
+        #os_buttons:hover > #os_buttons_list > li {
+            display: inline-block;
         }
     `);
 
-    var createRow = function(os, osName) {
-        var url = current_location.replace(/(apple\.com\/library(\/prerelease)?\/)([a-z]*)\//i, "$1" + os + "/");
-        var classes = current_os == os ? "pure-button pure-button-primary" : "pure-button";
 
-        return '<div>' +
-        '<a href=' + url + ' class="' + classes + '">' + osName + '</a>' +
-        '</div>';
+    var os_list = ["ios", "watchos", "tvos", "mac"];
+    var osVersionName = function(os) {
+        if (os == "ios") {
+            return "iOS";
+        }
+        else if (os == "watchos") {
+            return "watchOS";
+        }
+        else if (os == "tvos") {
+            return "tvOS";
+        }
+        else if (os == "mac") {
+            return "OS X";
+        }
+        return os;
     }
 
     // Create OS buttons
-    var os_buttons = document.createElement('div');
-    os_buttons.id = "os_buttons";
-    os_buttons.innerHTML =
-        createRow('ios', 'iOS') +
-        createRow('mac', 'OS X') +
-        createRow('watchos', 'watchOS') +
-        createRow('tvos', 'tvOS');
+    var container = document.createElement("div");
+    var os_buttons = document.createElement("ul");
+    container.appendChild(os_buttons);
+    container.id = "os_buttons";
+    os_buttons.id = "os_buttons_list";
 
-    document.body.appendChild(os_buttons);
+    for (var i = 0; i < os_list.length; i++) {
+        var os = os_list[i];
+
+        var url = current_location.replace(/(apple\.com\/library(\/prerelease)?\/)([a-z]*)\//i, "$1" + os + "/");
+        var current = current_os == os;
+
+        var link = document.createElement("a");
+        link.text = osVersionName(os);
+        link.className = "pure-button" + (current ? " pure-button-primary" : "");
+        link.setAttribute("href", url);
+
+        var item = document.createElement("li");
+        item.className = (current ? "other" : "other");
+        item.appendChild(link);
+
+        os_buttons.appendChild(item);
+    }
+
+    // Add header item
+    var titleSpan = document.createElement("span");
+    titleSpan.innerHTML = "Current: " + osVersionName(current_os);
+    titleSpan.className = "pure-button pure-button-primary";
+
+    var currentItem = document.createElement("li");
+    currentItem.className = "current";
+    currentItem.appendChild(titleSpan);
+    os_buttons.appendChild(currentItem);
+
+    document.body.appendChild(container);
 })()
