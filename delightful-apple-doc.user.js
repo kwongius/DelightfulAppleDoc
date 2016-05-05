@@ -2,7 +2,7 @@
 // @name         Delightful Apple Documentation
 // @namespace    https://github.com/kwongius/
 // @homepageURL  https://github.com/kwongius/DelightfulAppleDoc
-// @version      0.1.0
+// @version      0.1.1
 // @description  Simple script to denote the difference between current and prerelease documentation as well as providing simple buttons to switch between the current documentation OS.
 // @author       Kevin Wong
 // @match        *://developer.apple.com/library/*
