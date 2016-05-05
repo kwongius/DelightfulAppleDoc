@@ -58,7 +58,7 @@
                     background-image: url('https://raw.githubusercontent.com/kwongius/DelightfulAppleDoc/master/prerelease_bg.png');
                     background-attachment: fixed;
                 }
-                #reference_container > .important { background-color: #F9BF3B; } "
+                #reference_container > .important { background-color: #F9BF3B; }
         `);
     }
     else {
