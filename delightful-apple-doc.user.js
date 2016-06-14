@@ -125,7 +125,7 @@
             return "tvOS";
         }
         else if (os == "mac") {
-            return "OS X";
+            return "macOS";
         }
         return os;
     }
